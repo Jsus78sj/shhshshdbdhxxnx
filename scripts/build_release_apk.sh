@@ -88,7 +88,7 @@ fi
 
 # 7. Build split-per-ABI release APKs (smallest size for real phones)
 echo "[7/7] Building Release APKs (--split-per-abi)..."
-flutter build apk --release --split-per-abi --obfuscate --split-debug-info=build/debug-info
+flutter build apk --release --split-per-abi --split-debug-info=build/debug-info
 
 echo ""
 echo "============================================================"
