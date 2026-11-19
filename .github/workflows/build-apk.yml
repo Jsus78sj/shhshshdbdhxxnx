@@ -75,7 +75,9 @@ jobs:
               tail -n 40 build_log.txt
               echo '```'
             } >> "$GITHUB_STEP_SUMMARY"
-            msg=$( (grep -nE 'error •|Error:|ERROR|FAILED|What went wrong|Exception|Could not|Because|version solving|\[E\]' build_log.txt | head -8; echo '---'; tail -n 12 build_log.txt) | cut -c1-300 )
+            errs=$(grep -E 'error •' build_log.txt | sed -E 's/^[^•]*error • //' | awk -F' • ' '{print $2 " " $3 " | " substr($1,1,70)}' | sort -u)
+            cnt=$(echo "$errs" | grep -c . )
+            msg=$( (echo "Errors: $cnt"; echo "$errs" | head -25; echo '---'; tail -n 5 build_log.txt) | cut -c1-220 )
             msg="${msg//'%'/'%25'}"
             msg="${msg//$'\r'/'%0D'}"
             msg="${msg//$'\n'/'%0A'}"
