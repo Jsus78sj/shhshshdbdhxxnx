@@ -77,7 +77,7 @@ String _patch(String content, {required bool kotlin}) {
         ind +
         'signingConfig = if (bs8110KeyPropsFile.exists()) signingConfigs.getByName("bs8110Release") else signingConfigs.getByName("debug")\n' +
         ind +
-        'proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")';
+        'proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")';
   } else {
     releaseAdd = '\n' +
         ind +
@@ -87,7 +87,7 @@ String _patch(String content, {required bool kotlin}) {
         ind +
         'signingConfig bs8110KeyPropsFile.exists() ? signingConfigs.bs8110Release : signingConfigs.debug\n' +
         ind +
-        "proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'";
+        "proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'";
   }
   s = s.substring(0, releaseOpen + 1) +
       releaseAdd +
