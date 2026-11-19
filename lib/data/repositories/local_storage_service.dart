@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:hive_ce_flutter/hive_ce_flutter.dart';
 import '../../core/constants/app_constants.dart';
 
@@ -15,9 +16,30 @@ class LocalStorageService {
 
   /// تهيئة قواعد البيانات المحلية عند بدء تشغيل التطبيق
   static Future<void> initialize() async {
-    await Hive.initFlutter();
+    try {
+      await Hive.initFlutter();
+    } catch (_) {
+      // على بعض إصدارات path_provider_android (المبنية على JNI) قد يفشل جلب مجلد التطبيق
+      // (ClassNotFoundException). نستعمل مساراً بديلاً داخل مجلد بيانات التطبيق الخاص
+      // حتى تبقى المشاريع محفوظة دائماً بدل الاكتفاء بالذاكرة المؤقتة.
+      Hive.init(_fallbackStorageDir().path);
+    }
     _settingsBox = await Hive.openBox<dynamic>(AppConstants.settingsBoxName);
     _projectsBox = await Hive.openBox<dynamic>(AppConstants.projectsBoxName);
+  }
+
+  /// Android: Directory.systemTemp = <app data>/cache  →  نستخدم <app data>/files/bs8110_hive
+  static Directory _fallbackStorageDir() {
+    final tmp = Directory.systemTemp;
+    try {
+      final dir = Directory('${tmp.parent.path}/files/bs8110_hive');
+      dir.createSync(recursive: true);
+      return dir;
+    } catch (_) {
+      final dir = Directory('${tmp.path}/bs8110_hive');
+      dir.createSync(recursive: true);
+      return dir;
+    }
   }
 
   static bool get isInitialized => _settingsBox != null && _projectsBox != null;
