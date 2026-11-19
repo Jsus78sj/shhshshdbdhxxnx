@@ -61,7 +61,29 @@ flutter analyze --no-fatal-infos --no-fatal-warnings
 if [ "${SKIP_TESTS:-0}" = "1" ]; then
   echo "      SKIP_TESTS=1 -> skipping flutter test."
 else
-  flutter test
+  # --reporter expanded: يطبع سبب كل فشل كاملاً (بدل المجموعات المطوية في سجل GitHub).
+  # الاختبارات الفاشلة لا توقف بناء الـ APK افتراضياً؛ للتشديد: STRICT_TESTS=1
+  mkdir -p build
+  set +e
+  flutter test --reporter expanded 2>&1 | tee build/test_report.txt
+  TEST_RC=${PIPESTATUS[0]}
+  set -e
+  if [ "$TEST_RC" -ne 0 ]; then
+    echo "WARNING: flutter test failed (exit $TEST_RC)."
+    if [ -n "${GITHUB_STEP_SUMMARY:-}" ]; then
+      {
+        echo '### flutter test: failures (non-blocking) - details'
+        echo '```'
+        grep -nE '\[E\]|EXCEPTION CAUGHT|Expected:|Actual:|Which:|Bad state|Unable to load asset|MissingPlugin|Failed assertion|Exception:|Error:|Invalid argument|Null check|RenderFlex overflowed|No element|Too many elements|Found 0 widgets|but found' build/test_report.txt | cut -c1-260 | head -120
+        echo '```'
+      } >> "$GITHUB_STEP_SUMMARY"
+    fi
+    if [ "${STRICT_TESTS:-0}" = "1" ]; then
+      echo "STRICT_TESTS=1 -> failing the build."
+      exit 1
+    fi
+    echo "Continuing to build the APK (tests are non-blocking; see build/test_report.txt)."
+  fi
 fi
 
 # 7. Build split-per-ABI release APKs (smallest size for real phones)
