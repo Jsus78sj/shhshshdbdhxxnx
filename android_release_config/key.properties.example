@@ -1,0 +1,9 @@
+# لتوقيع النسخة الإنتاجية (Release APK) بمفتاحك الخاص:
+# 1. أنشئ مفتاح التوقيع بالأمر:
+#    keytool -genkey -v -keystore android/app/upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias bs8110key
+# 2. انسخ هذا الملف إلى android/key.properties واملأ القيم أدناه (لا ترفع key.properties إلى Git):
+
+storePassword=YOUR_KEYSTORE_PASSWORD
+keyPassword=YOUR_KEY_PASSWORD
+keyAlias=bs8110key
+storeFile=upload-keystore.jks

@@ -1,0 +1,21 @@
+# Flutter / Dart
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Android signing — لا ترفع المفاتيح أبداً
+android/key.properties
+android/app/*.jks
+android/app/*.keystore
+*.jks
+*.keystore
+
+# نسخ احتياطية تولدها أداة تعديل gradle
+android/app/*.bs8110.bak
+
+# IDE
+.idea/
+*.iml
+.vscode/

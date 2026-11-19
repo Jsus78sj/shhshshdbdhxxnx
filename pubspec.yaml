@@ -1,0 +1,61 @@
+name: bs8110_slab_designer
+description: "تطبيق هندسي متكامل لتصميم البلاطات الخرسانية المصمتة وفق الكود البريطاني BS 8110 وطريقة الشرح الجامعية (يعمل بالكامل دون إنترنت)."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  # flutter_lints ^5 يتطلب Dart 3.5 (= Flutter 3.24). نفس الحد في RELEASE_GUIDE والسكربتات.
+  sdk: '>=3.5.0 <4.0.0'
+  flutter: '>=3.24.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # إدارة الحالة والتنقل
+  flutter_riverpod: ^2.6.1
+  go_router: ^14.6.2
+
+  # عرض المعادلات الرياضية (LaTeX) بدون إنترنت
+  flutter_math_fork: ^0.7.2
+
+  # التخزين المحلي للمشاريع والإعدادات بدون إنترنت
+  hive_ce: ^2.8.0
+  hive_ce_flutter: ^2.1.0
+
+  # تصدير التقارير والرسومات إلى PDF باللغة العربية بدون إنترنت
+  pdf: ^3.11.1
+  printing: ^5.13.4
+
+  # أيقونات قياسية
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  flutter_launcher_icons: ^0.14.2
+  flutter_native_splash: ^2.4.4
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/fonts/
+    - assets/branding/
+
+  fonts:
+    - family: NotoSansArabic
+      fonts:
+        - asset: assets/fonts/NotoSansArabic-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/NotoSansArabic-Bold.ttf
+          weight: 700
+    - family: DejaVuSans
+      fonts:
+        - asset: assets/fonts/DejaVuSans.ttf
+          weight: 400
+        - asset: assets/fonts/DejaVuSans-Bold.ttf
+          weight: 700
