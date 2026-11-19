@@ -61,7 +61,35 @@ jobs:
       - name: Build release APK
         env:
           SKIP_TESTS: ${{ inputs.skip_tests && '1' || '0' }}
-        run: bash scripts/build_release_apk.sh
+        run: |
+          set +e
+          bash scripts/build_release_apk.sh 2>&1 | tee build_log.txt
+          code=${PIPESTATUS[0]}
+          if [ "$code" -ne 0 ]; then
+            # نعرض سبب الفشل في Annotations وSummary (مرئية بدون تسجيل دخول)
+            {
+              echo '### Build failed - key lines'
+              echo '```'
+              grep -nE 'error •|Error:|ERROR|FAILED|FAILURE|What went wrong|Exception|Could not|Because|version solving|Some tests failed|\[E\]' build_log.txt | head -40
+              echo '--- last 40 lines ---'
+              tail -n 40 build_log.txt
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            msg=$( (grep -nE 'error •|Error:|ERROR|FAILED|What went wrong|Exception|Could not|Because|version solving|\[E\]' build_log.txt | head -8; echo '---'; tail -n 12 build_log.txt) | cut -c1-300 )
+            msg="${msg//'%'/'%25'}"
+            msg="${msg//$'\r'/'%0D'}"
+            msg="${msg//$'\n'/'%0A'}"
+            echo "::error title=Build release APK failed::${msg}"
+          fi
+          exit $code
+
+      - name: Upload build log
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build_log.txt
+          if-no-files-found: ignore
 
       - uses: actions/upload-artifact@v4
         with:
